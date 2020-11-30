@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const URI = "mongodb+srv://dbUser:dbUser@cluster0.rkhyp.mongodb.net/<dbname>?retryWrites=true&w=majority";
+const URI = "mongodb+srv://dbUser:dbUser@cluster0.rkhyp.mongodb.net/Products?retryWrites=true&w=majority";
 
 const connectDB = async() => {
     await mongoose.connect(URI, {
@@ -10,4 +10,4 @@ const connectDB = async() => {
     console.log('db connected');
 }
 
-module.exports = connectDB
+module.exports = connectDB;
