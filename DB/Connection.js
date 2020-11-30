@@ -4,8 +4,8 @@ const URI = "mongodb+srv://dbUser:dbUser@cluster0.rkhyp.mongodb.net/<dbname>?ret
 
 const connectDB = async() => {
     await mongoose.connect(URI, {
-        useUnifiedTopology: true,
-        useNewUrlParser: true
+        useUnifiedTopology:true,
+        useNewUrlParser:true
     });
     console.log('db connected');
 }
