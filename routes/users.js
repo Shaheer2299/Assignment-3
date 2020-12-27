@@ -1,39 +1,35 @@
-const express = require("express");
-let router = express.Router();
-let { User } = require("./../models/user");
-var bcrypt = require("bcryptjs");
-const _ = require("lodash");
-const jwt = require("jsonwebtoken");
-const config = require("config");
-router.post("/register", async (req, res) => {
-  let user = await User.findOne({ email: req.body.email });
-  if (user) return res.status(400).send("User with given Email already exist");
-  user = new User();
-  user.name = req.body.name;
-  user.email = req.body.email;
-  user.password = req.body.password;
-  await user.generateHashedPassword();
+var express = require('express');
+var router = express.Router();
+var User = require("../models/user");
+/* GET users listing. */  
+router.get('/register', function(req, res, next) {
+  res.render('users/register');
+});
+
+router.post('/register', async function (req, res, next) {
+  let user = new User(req.body);
   await user.save();
-  let token = jwt.sign(
-    { _id: user._id, name: user.name, role: user.role },
-    config.get("jwtPrivateKey")
-  );
-  let datatoRetuen = {
-    name: user.name,
-    email: user.email,
-    token: user.token,
-  };
-  return res.send(_.pick(user, ["name", "email"]));
+  res.redirect('/'); 
 });
-router.post("/login", async (req, res) => {
-  let user = await User.findOne({ email: req.body.email });
-  if (!user) return res.status(400).send("Incorrect UserName/Password");
-  let isValid = await bcrypt.compare(req.body.password, user.password);
-  if (!isValid) return res.status(401).send("Incorrect UserName/Password");
-  let token = jwt.sign(
-    { _id: user._id, name: user.name, role: user.role },
-    config.get("jwtPrivateKey")
-  );
-  res.send(token);
+
+router.get('/login', function(req, res, next) {
+  res.render('users/login');
 });
+
+router.get('/logout', function (req, res, next) {
+  req.session.user = null;
+  res.redirect('/login');
+});
+
+router.post('/login', async function (req, res, next) {
+  let user = await User.findOne({
+    email: req.body.email,
+    password: req.body.password,
+  });
+  if (!user) return res.redirect("/login");
+  req.session.user = user;
+  return res.redirect("/");
+
+});
+
 module.exports = router;

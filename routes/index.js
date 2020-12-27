@@ -6,4 +6,9 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+router.get('/cart', function (req, res, next) {
+  let cart = req.cookies.cart;
+  if (!cart) cart = [];
+  res.render("cart",{ cart });
+});
 module.exports = router;
